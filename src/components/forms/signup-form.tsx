@@ -85,7 +85,7 @@ export function SignupForm({
 
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
-      <Card className="border-none">
+      <Card className="border-none bg-transparent">
         <CardHeader>
           <CardTitle>Create an account</CardTitle>
           <CardDescription>

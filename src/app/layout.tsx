@@ -25,19 +25,19 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className="scroll-smooth">
       <body
-        className={`${geistSans.variable} ${geistMono.className} antialiased`}
+        className={`${geistSans.variable} ${geistMono.className} antialiased `}
         suppressHydrationWarning
       >
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
+          defaultTheme="light"
           enableSystem
           disableTransitionOnChange
         >
           {/* <ModeToggle /> */}
-          <Toaster position="bottom-right" />
+          <Toaster position="bottom-right" richColors />
           {children}
         </ThemeProvider>
       </body>
