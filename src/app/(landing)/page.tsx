@@ -1,10 +1,11 @@
-import { FeaturesSectionWithHoverEffects } from '@/components/featured-section/featured-section'
+import FeaturedSection from '@/components/featured-section/featured-section'
 import { FooterDemo } from '@/components/footer/footer-content'
 import HeroSection from '@/components/hero-section'
+import TestimonialsSection from '@/components/testimonial-section/testimonial-section'
 export default function Home() {
   return (
     <>
-      <div className="min-h-screen w-full relative">
+      <div className="min-h-screen w-full ">
         {/* Top Fade Grid Background */}
         <div
           className="absolute inset-0 z-0 dark:hidden"
@@ -37,7 +38,8 @@ export default function Home() {
         />
         {/* Your Content/Components */}
         <HeroSection />
-        <FeaturesSectionWithHoverEffects />
+        <FeaturedSection />
+        <TestimonialsSection />
         <FooterDemo />
       </div>
     </>

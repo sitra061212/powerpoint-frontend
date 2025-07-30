@@ -2,7 +2,6 @@
 
 import {
   BookOpen,
-  CreditCard,
   Handshake,
   HelpCircle,
   Scale,
