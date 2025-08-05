@@ -18,7 +18,7 @@ const transitionVariants = {
       filter: 'blur(0px)',
       y: 0,
       transition: {
-        type: 'spring',
+        type: 'spring' as const,
         bounce: 0.3,
         duration: 1.5,
       },
@@ -30,7 +30,7 @@ export default function HeroSection() {
   return (
     <>
       <HeroHeader />
-      <main className="overflow-hidden md:h-screen flex justify-center">
+<main className="overflow-hidden py-24 md:py-30 flex justify-center">
         <div
           aria-hidden
           className="absolute inset-0 isolate hidden opacity-65 contain-strict lg:block"

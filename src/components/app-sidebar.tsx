@@ -1,6 +1,12 @@
 'use client'
 
-import { IconDashboard, IconListDetails } from '@tabler/icons-react'
+import {
+  IconDashboard,
+  IconFileText,
+  IconLayout,
+  IconSettings,
+  IconLogout,
+} from '@tabler/icons-react'
 import { usePathname } from 'next/navigation'
 import * as React from 'react'
 import { NavMain } from '@/components/nav-main'
@@ -23,22 +29,39 @@ const data = {
   },
   navMain: [
     {
-      title: 'Home',
+      title: 'Dashboard',
       url: '/home',
       icon: IconDashboard,
     },
     {
-      title: 'about',
-      url: '/about',
-      icon: IconListDetails,
+      title: 'My Presentations',
+      url: '/presentations',
+      icon: IconFileText,
+    },
+    {
+      title: 'Templates',
+      url: '/templates',
+      icon: IconLayout,
+    },
+    {
+      title: 'Settings',
+      url: '/settings',
+      icon: IconSettings,
+    },
+    {
+      title: 'Logout',
+      url: '/logout',
+      icon: IconLogout,
     },
   ],
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname()
+
   return (
     <Sidebar collapsible="icon" {...props}>
+      {/* Sidebar Header */}
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -47,15 +70,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
               <a href="#">
-                <span className="text-base font-bold">Persina Ai</span>
+                <span className="text-base font-bold">Presina AI</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
+
+      {/* Sidebar Content */}
       <SidebarContent>
         <NavMain items={data.navMain} activePath={pathname} />
       </SidebarContent>
+
+      {/* Sidebar Footer (User Info) */}
       <SidebarFooter>
         <NavUser user={data.user} />
       </SidebarFooter>
