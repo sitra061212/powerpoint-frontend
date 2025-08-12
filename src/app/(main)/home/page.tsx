@@ -1,69 +1,90 @@
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Bell } from "lucide-react";
+'use client'
+
+import { useState, useRef } from 'react'
+import { WelcomeCard } from '@/components/dashboard-component/WelcomeCard'
+import { FileButtons } from '@/components/dashboard-component/FileButtons'
+import { SlideSelection } from '@/components/dashboard-component/SlideSelection'
+import { TopicInput } from '@/components/dashboard-component/TopicInput'
 
 export default function DashboardPage() {
+  const [file, setFile] = useState<File | null>(null)
+  const [topicDescription, setTopicDescription] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [selectedSlides, setSelectedSlides] = useState<number | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0]
+    if (selectedFile) setFile(selectedFile)
+  }
+
+  const removeFile = () => {
+    setFile(null)
+    if (fileInputRef.current) fileInputRef.current.value = ''
+  }
+
+  const handleGenerate = async () => {
+    if (!topicDescription && !file) {
+      alert('Please enter a prompt or upload a file.')
+      return
+    }
+    if (!selectedSlides) {
+      alert('Please select the number of slides.')
+      return
+    }
+
+    setLoading(true)
+    const formData = new FormData()
+    if (topicDescription) formData.append('prompt', topicDescription)
+    if (file) formData.append('file', file)
+    formData.append('num_slides', String(selectedSlides))
+
+    try {
+      const res = await fetch('http://localhost:5000/api/outline', {
+        method: 'POST',
+        body: formData,
+      })
+      if (!res.ok) throw new Error('Failed to generate outline')
+      const data = await res.json()
+      const slides = data?.outline ?? data?.data?.slides ?? []
+      localStorage.setItem('generatedOutline', JSON.stringify(slides))
+      window.location.href = '/presentations/outline'
+    } catch (error) {
+      console.error(error)
+      alert('Something went wrong while generating outline.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
-    <div className="p-6 md:p-10">
-      {/* Topbar */}
-      <div className="flex justify-between items-center mb-10">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-800 dark:text-white">Welcome back, Alex!</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Let’s create something powerful today.</p>
-        </div>
-        <div className="flex items-center gap-4">
-          <Bell className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-          <Avatar>
-            <AvatarImage src="/user.jpg" />
-            <AvatarFallback>A</AvatarFallback>
-          </Avatar>
-        </div>
-      </div>
+    <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center gap-8 p-6">
+      <input
+        type="file"
+        ref={fileInputRef}
+        className="hidden"
+        onChange={handleFileChange}
+        accept=".pdf,.docx,.pptx"
+      />
 
-      {/* Feature Cards */}
-      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-        <FeatureCard
-          title="New Presentation"
-          description="Start from an AI prompt or upload a document."
-          href="/presentations/new"
-          buttonLabel="+ Create"
-        />
-        <FeatureCard
-          title="Recent Projects"
-          description="Quickly access your most recent slides."
-          href="/projects"
-          buttonLabel="View All"
-        />
-        <FeatureCard
-          title="Templates"
-          description="Browse ready-to-use layouts and styles."
-          href="/templates"
-          buttonLabel="Explore Templates"
-        />
-      </section>
+      <WelcomeCard />
 
-      {/* Quick Tips Section */}
-      <section className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
-        <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">Quick Tips</h2>
-        <ul className="list-disc pl-6 space-y-1 text-sm text-gray-600 dark:text-gray-400">
-          <li>Use the AI prompt to generate slides quickly.</li>
-          <li>Reorder slides using drag-and-drop editor.</li>
-          <li>Collaborate with team members in real-time.</li>
-        </ul>
-      </section>
+      <FileButtons
+        file={file}
+        onFileSelect={() => fileInputRef.current?.click()}
+        onRemove={removeFile}
+      />
+
+      {(topicDescription || file) && (
+        <SlideSelection onSelect={(count) => setSelectedSlides(count)} />
+      )}
+
+      <TopicInput
+        value={topicDescription}
+        loading={loading}
+        onChange={setTopicDescription}
+        onGenerate={handleGenerate}
+      />
     </div>
-  );
-}
-
-// Feature Card component
-function FeatureCard({ title, description, href, buttonLabel }: { title: string; description: string; href: string; buttonLabel: string }) {
-  return (
-    <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow hover:shadow-xl transition">
-      <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">{title}</h3>
-      <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">{description}</p>
-      <a href={href}>
-        <Button className="w-full">{buttonLabel}</Button>
-      </a>
-    </div>
-  );
+  )
 }

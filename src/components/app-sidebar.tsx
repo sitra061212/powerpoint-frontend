@@ -2,12 +2,11 @@
 
 import {
   IconDashboard,
-  IconFileText,
   IconLayout,
   IconSettings,
   IconLogout,
 } from '@tabler/icons-react'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import * as React from 'react'
 import { NavMain } from '@/components/nav-main'
 import { NavUser } from '@/components/nav-user'
@@ -21,43 +20,38 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
 
-const data = {
-  user: {
-    name: 'shadcn',
-    email: 'm@example.com',
-    avatar: '/avatars/shadcn.jpg',
-  },
-  navMain: [
-    {
-      title: 'Dashboard',
-      url: '/home',
-      icon: IconDashboard,
-    },
-    {
-      title: 'My Presentations',
-      url: '/presentations',
-      icon: IconFileText,
-    },
-    {
-      title: 'Templates',
-      url: '/templates',
-      icon: IconLayout,
-    },
-    {
-      title: 'Settings',
-      url: '/settings',
-      icon: IconSettings,
-    },
-    {
-      title: 'Logout',
-      url: '/logout',
-      icon: IconLogout,
-    },
-  ],
-}
-
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname()
+  const router = useRouter()
+
+  // 🔹 Get logged-in user from localStorage or API
+  const [user, setUser] = React.useState<{ name: string; email: string } | null>(null)
+
+  React.useEffect(() => {
+    const storedUser = localStorage.getItem('user')
+    if (storedUser) {
+      setUser(JSON.parse(storedUser))
+    }
+  }, [])
+
+  // 🔹 Logout function
+  const handleLogout = () => {
+    localStorage.removeItem('token') // remove auth token
+    localStorage.removeItem('user') // remove user info
+    router.push('/login') // redirect to login page
+  }
+
+  const navMain = [
+    { title: 'Dashboard', url: '/home', icon: IconDashboard },
+    { title: 'Templates', url: '/templates', icon: IconLayout },
+    { title: 'Settings', url: '/settings', icon: IconSettings },
+    {
+      title: 'Logout',
+      url: '#',
+      icon: IconLogout,
+      onClick: handleLogout, // attach logout action
+    },
+  ]
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -69,7 +63,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               asChild
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
-              <a href="#">
+              <a href="/">
                 <span className="text-base font-bold">Presina AI</span>
               </a>
             </SidebarMenuButton>
@@ -79,12 +73,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
       {/* Sidebar Content */}
       <SidebarContent>
-        <NavMain items={data.navMain} activePath={pathname} />
+        <NavMain items={navMain} activePath={pathname} />
       </SidebarContent>
 
       {/* Sidebar Footer (User Info) */}
       <SidebarFooter>
-        <NavUser user={data.user} />
+        {user && <NavUser user={{ ...user, avatar: '/avatars/default.jpg' }} />}
       </SidebarFooter>
     </Sidebar>
   )
