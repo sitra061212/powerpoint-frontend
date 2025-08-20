@@ -1,15 +1,7 @@
 'use client'
 
-import {
-  IconDashboard,
-  IconLayout,
-  IconSettings,
-  IconLogout,
-} from '@tabler/icons-react'
 import { usePathname, useRouter } from 'next/navigation'
 import * as React from 'react'
-import { NavMain } from '@/components/nav-main'
-import { NavUser } from '@/components/nav-user'
 import {
   Sidebar,
   SidebarContent,
@@ -19,50 +11,75 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
+import { NavMain } from '@/components/nav-main'
+import { NavUser } from '@/components/nav-user'
+import { IconDashboard, IconLayout, IconSettings } from '@tabler/icons-react'
+
+// ✅ Auth client
+import { authClient } from '@/lib/auth-client'
+
+// 🔹 Define User type
+interface User {
+  id: string
+  name?: string
+  email: string
+  image?: string
+}
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname()
   const router = useRouter()
 
-  // 🔹 Get logged-in user from localStorage or API
-  const [user, setUser] = React.useState<{ name: string; email: string } | null>(null)
+  const [user, setUser] = React.useState<User | null>(null)
+  const [loading, setLoading] = React.useState(true)
 
+  // ✅ Fetch session once
   React.useEffect(() => {
-    const storedUser = localStorage.getItem('user')
-    if (storedUser) {
-      setUser(JSON.parse(storedUser))
+    const fetchSession = async () => {
+      try {
+        const { data } = await authClient.getSession()
+        console.log('Fetched session:', data)
+        if (data?.user) {
+          setUser(data.user)
+        } else {
+          setUser(null)
+        }
+      } catch (err) {
+        console.error('Failed to fetch session:', err)
+        setUser(null)
+      } finally {
+        setLoading(false)
+      }
     }
+
+    fetchSession()
   }, [])
 
-  // 🔹 Logout function
-  const handleLogout = () => {
-    localStorage.removeItem('token') // remove auth token
-    localStorage.removeItem('user') // remove user info
-    router.push('/login') // redirect to login page
+  // ✅ Logout handler
+  const handleLogout = async () => {
+    try {
+      await authClient.signOut()
+      setUser(null)
+      router.push('/login')
+    } catch (err) {
+      console.error('Logout failed:', err)
+    }
   }
 
+  // 🛠 Nav items
   const navMain = [
     { title: 'Dashboard', url: '/home', icon: IconDashboard },
     { title: 'Templates', url: '/templates', icon: IconLayout },
     { title: 'Settings', url: '/settings', icon: IconSettings },
-    {
-      title: 'Logout',
-      url: '#',
-      icon: IconLogout,
-      onClick: handleLogout, // attach logout action
-    },
   ]
 
   return (
     <Sidebar collapsible="icon" {...props}>
-      {/* Sidebar Header */}
+      {/* Logo/Header */}
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              className="data-[slot=sidebar-menu-button]:!p-1.5"
-            >
+            <SidebarMenuButton asChild className="!p-1.5">
               <a href="/">
                 <span className="text-base font-bold">Presina AI</span>
               </a>
@@ -71,14 +88,30 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
 
-      {/* Sidebar Content */}
+      {/* Navigation Links */}
       <SidebarContent>
         <NavMain items={navMain} activePath={pathname} />
       </SidebarContent>
 
-      {/* Sidebar Footer (User Info) */}
+      {/* User Footer */}
       <SidebarFooter>
-        {user && <NavUser user={{ ...user, avatar: '/avatars/default.jpg' }} />}
+        {loading ? (
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton disabled>Loading...</SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        ) : user ? (
+          <NavUser user={user} onLogout={handleLogout} />
+        ) : (
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton onClick={() => (window.location.href = '/login')}>
+                Log in
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        )}
       </SidebarFooter>
     </Sidebar>
   )

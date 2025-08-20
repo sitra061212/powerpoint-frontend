@@ -1,23 +1,23 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 
 interface Slide {
-  title: string;
-  points: string[];
+  title: string
+  points: string[]
 }
 
 interface PresentationCardProps {
-  id: string;
-  createdAt: string;
-  slides: Slide[];
-  source: string;
+  id: string
+  createdAt: string
+  slides: Slide[]
+  title: string
 }
 
 export default function PresentationCard({
   id,
   createdAt,
   slides,
-  source,
+  title,
 }: PresentationCardProps) {
   return (
     <Card className="flex flex-col h-full">
@@ -29,7 +29,7 @@ export default function PresentationCard({
           {slides[0]?.title || "Untitled Presentation"}
         </h3>
         <p className="text-gray-700 dark:text-gray-300 text-sm line-clamp-3">
-          {source.substring(0, 180)}...
+          {title ? title.substring(0, 180) + "..." : "No title available"}
         </p>
       </CardContent>
       <div className="p-4 pt-0">
@@ -43,5 +43,5 @@ export default function PresentationCard({
         </Button>
       </div>
     </Card>
-  );
+  )
 }

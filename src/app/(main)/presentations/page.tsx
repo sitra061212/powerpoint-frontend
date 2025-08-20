@@ -7,7 +7,7 @@ import PresentationCard from "@/components/presentations/PresentationCard";
 
 interface SlidePresentation {
   _id: string;
-  source: string;
+  title: string;
   slides: Array<{ title: string; points: string[] }>;
   isConverted: boolean;
   createdAt: string;
@@ -20,11 +20,11 @@ export default function MyPresentationsPage() {
   useEffect(() => {
     const fetchSlides = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/outline");
+        const res = await fetch("http://localhost:5000/api/slide",{credentials: 'include',});
         if (!res.ok) throw new Error("Failed to fetch data");
 
-        const data: SlidePresentation[] = await res.json();
-        setSlides(data.filter((p) => p.isConverted));
+        const { presentations } = await res.json()
+setSlides(presentations)
       } catch (error) {
         console.error("Failed to fetch converted slides:", error);
       } finally {
@@ -53,7 +53,7 @@ export default function MyPresentationsPage() {
               id={slide._id}
               createdAt={slide.createdAt}
               slides={slide.slides}
-              source={slide.source}
+              title={slide.title}
             />
           ))}
         </div>

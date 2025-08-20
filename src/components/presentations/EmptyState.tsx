@@ -6,7 +6,7 @@ export default function EmptyState() {
       <p className="text-gray-500 dark:text-gray-400 mb-4">
         You haven't created any slides yet.
       </p>
-      <Button onClick={() => (window.location.href = "/")}>
+      <Button onClick={() => (window.location.href = "/home")}>
         Create Your First Slide
       </Button>
     </div>

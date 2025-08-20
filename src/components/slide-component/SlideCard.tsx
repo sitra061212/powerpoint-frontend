@@ -1,11 +1,12 @@
-import { Card } from "@/components/ui/card";
+// SlideCard.tsx
+import { Card } from "@/components/ui/card"
 
 interface SlideCardProps {
-  title: string;
-  points: string[];
+  title: string
+  points?: string[]
 }
 
-export default function SlideCard({ title, points }: SlideCardProps) {
+export default function SlideCard({ title, points = [] }: SlideCardProps) {
   return (
     <Card className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg overflow-hidden border border-slate-200 dark:border-slate-700 transition-all duration-300 hover:shadow-2xl">
       <div className="p-8 md:p-10">
@@ -14,7 +15,7 @@ export default function SlideCard({ title, points }: SlideCardProps) {
         </h2>
 
         {points.length > 0 ? (
-          <ul className="space-y-4">
+          <ul className="space-y-4 mb-8">
             {points.map((point, index) => (
               <li
                 key={index}
@@ -30,7 +31,7 @@ export default function SlideCard({ title, points }: SlideCardProps) {
             ))}
           </ul>
         ) : (
-          <p className="text-slate-500 dark:text-slate-400 italic">
+          <p className="text-slate-500 dark:text-slate-400 italic mb-8">
             No points in this slide.
           </p>
         )}
@@ -38,5 +39,5 @@ export default function SlideCard({ title, points }: SlideCardProps) {
 
       <div className="h-1.5 w-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
     </Card>
-  );
+  )
 }

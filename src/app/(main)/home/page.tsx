@@ -16,6 +16,7 @@ export default function DashboardPage() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0]
     if (selectedFile) setFile(selectedFile)
+
   }
 
   const removeFile = () => {
@@ -41,13 +42,27 @@ export default function DashboardPage() {
 
     try {
       const res = await fetch('http://localhost:5000/api/outline', {
+        credentials: 'include',
         method: 'POST',
         body: formData,
       })
       if (!res.ok) throw new Error('Failed to generate outline')
+
       const data = await res.json()
-      const slides = data?.outline ?? data?.data?.slides ?? []
-      localStorage.setItem('generatedOutline', JSON.stringify(slides))
+
+       // ✅ Fix: Use data.slides
+       const slides = data?.slides ?? []
+
+    if (!Array.isArray(slides)) {
+      throw new Error('Invalid slides format')
+    }
+
+    // ✅ Save to localStorage
+    localStorage.setItem('generatedOutline', JSON.stringify(slides))
+    localStorage.setItem('outlineId', data._id)
+    localStorage.setItem('numSlides', data.numSlides?.toString())
+
+
       window.location.href = '/presentations/outline'
     } catch (error) {
       console.error(error)
