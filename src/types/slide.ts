@@ -1,4 +1,5 @@
 export type SlideType =
+  |id?: string | number
   | "title"
   | "bullet"
   | "image-text"
