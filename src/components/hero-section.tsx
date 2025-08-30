@@ -6,31 +6,22 @@ import { HeroPill } from '@/components/ui/hero-pill'
 import { TextEffect } from '@/components/ui/text-effect'
 import { HeroHeader } from './header'
 
-const transitionVariants = {
-  item: {
-    hidden: {
-      opacity: 0,
-      filter: 'blur(12px)',
-      y: 12,
-    },
-    visible: {
-      opacity: 1,
-      filter: 'blur(0px)',
-      y: 0,
-      transition: {
-        type: 'spring',
-        bounce: 0.3,
-        duration: 1.5,
-      },
-    },
+const transitionVariants: Variants = {
+  hidden: { opacity: 0, filter: "blur(10px)", y: 50 },
+  visible: {
+    opacity: 1,
+    filter: "blur(0px)",
+    y: 0,
+    transition: { type: "spring", bounce: 0.3, duration: 0.5 },
   },
-}
+};
+
 
 export default function HeroSection() {
   return (
     <>
       <HeroHeader />
-      <main className="overflow-hidden md:h-screen flex justify-center">
+<main className="overflow-hidden py-24 md:py-30 flex justify-center">
         <div
           aria-hidden
           className="absolute inset-0 isolate hidden opacity-65 contain-strict lg:block"
