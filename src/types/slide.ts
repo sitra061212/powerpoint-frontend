@@ -39,4 +39,7 @@ export interface SlideData {
 
   // chart
   data?: { name: string; value: number }[];
+  
+   imageUrl?: string
+   imagePosition?: "left" | "right" | "center"
 }
