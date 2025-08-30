@@ -1,5 +1,5 @@
 export type SlideType =
-  |id?: string | number
+  | "id"
   | "title"
   | "bullet"
   | "image-text"
@@ -10,7 +10,8 @@ export type SlideType =
 
 export interface SlideData {
   type: SlideType;
-
+  //id
+  id?: string | number
   // title
   title?: string;
   subtitle?: string;
