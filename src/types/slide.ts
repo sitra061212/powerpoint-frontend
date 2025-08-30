@@ -41,5 +41,5 @@ export interface SlideData {
   data?: { name: string; value: number }[];
   
    imageUrl?: string
-   imagePosition?: "left" | "right" | "center"
+   imagePosition?: "left" | "right" 
 }
